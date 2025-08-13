@@ -50,7 +50,6 @@ class OLT : public cSimpleModule
         simsignal_t latencySignalHpt;
         simsignal_t latencySignalBkg;
 
-
     public:
         //virtual ~OLT();
 
@@ -247,14 +246,10 @@ void OLT::handleMessage(cMessage *msg)
 
             double worst_rtt = *std::max_element(onu_rtt.begin(), onu_rtt.end());
             double tx_start = 0;
-            double onu_max_grant_TC2 = 0;
-            double onu_max_grant_TC3 = onu_max_grant;
 
             for(int i = 0;i<onus;i++) {
-                if((onu_buffer_TC2[i] > 0)||(onu_buffer_TC3[i] > 0)) {                     // adjust priorities if TC-2 traffic is present
-                    onu_max_grant_TC2 = (onu_buffer_TC2[i]/(onu_buffer_TC2[i]+onu_buffer_TC3[i]))*onu_max_grant;
-                    onu_max_grant_TC3 = (1-(onu_buffer_TC2[i]/(onu_buffer_TC2[i]+onu_buffer_TC3[i])))*onu_max_grant;
-                }
+                double onu_max_grant_TC2 = (onu_buffer_TC2[i]/(onu_buffer_TC2[i]+onu_buffer_TC3[i]))*onu_max_grant;
+                double onu_max_grant_TC3 = (1-(onu_buffer_TC2[i]/(onu_buffer_TC2[i]+onu_buffer_TC3[i])))*onu_max_grant;
 
                 onu_grant_TC2[i] = std::min(onu_buffer_TC2[i],onu_max_grant_TC2);      // granting BW using limited service policy
                 onu_grant_TC3[i] = std::min(onu_buffer_TC3[i],onu_max_grant_TC3);

@@ -217,14 +217,10 @@ void MFU::handleMessage(cMessage *msg)
 
             double worst_rtt = *std::max_element(sfu_rtt.begin(), sfu_rtt.end());
             double tx_start = 0;
-            double sfu_max_grant_TC2 = 0;
-            double sfu_max_grant_TC3 = sfu_max_grant;
 
             for(int i = 0;i<sfus;i++) {
-                if((sfu_buffer_TC2[i] > 0)||(sfu_buffer_TC3[i] > 0)) {                     // adjust priorities if TC-2 traffic is present
-                    sfu_max_grant_TC2 = (sfu_buffer_TC2[i]/(sfu_buffer_TC2[i]+sfu_buffer_TC3[i]))*sfu_max_grant;
-                    sfu_max_grant_TC3 = (1-(sfu_buffer_TC2[i]/(sfu_buffer_TC2[i]+sfu_buffer_TC3[i])))*sfu_max_grant;
-                }
+                double sfu_max_grant_TC2 = (sfu_buffer_TC2[i]/(sfu_buffer_TC2[i]+sfu_buffer_TC3[i]))*sfu_max_grant;
+                double sfu_max_grant_TC3 = (1-(sfu_buffer_TC2[i]/(sfu_buffer_TC2[i]+sfu_buffer_TC3[i])))*sfu_max_grant;
 
                 sfu_grant_TC2[i] = std::min(sfu_buffer_TC2[i], sfu_max_grant_TC2);      // granting BW using limited service policy
                 sfu_grant_TC3[i] = std::min(sfu_buffer_TC3[i], sfu_max_grant_TC3);
